@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.zhengjie.modules.mockexam.mapper.MeQuestionMapper">
+
+
+    <sql id="queryByType">
+        <where>
+            <if test="map.subjectType !=null ">
+                subject_type=#{map.subjectType}
+            </if>
+
+            <if test="map.carType!=null ">
+                and car_type=#{map.carType}
+            </if>
+
+            <if test="map.questionType !=null ">
+                and question_type=#{map.questionType}
+            </if>
+            <if test="map.objectiveType !=null ">
+                and objective_type=#{map.objectiveType}
+            </if>
+            <if test="map.likeQuestions !=null ">
+                and question like  concat('%',#{map.likeQuestions},'%')
+            </if>
+
+            <!--> 随机100题判断，放到最后<!-->
+            <if test="map.isExam!=null   and map.isRandom==null">
+                ORDER BY RAND() LIMIT 100
+            </if>
+        </where>
+
+
+    </sql>
+    <select id="selectByPage" resultType="me.zhengjie.modules.mockexam.pojo.MeQuestion">
+        select * from me_question
+        <include refid="queryByType"></include>
+
+    </select>
+
+    <select id="selectRandomQuestion" resultType="me.zhengjie.modules.mockexam.pojo.MeQuestion">
+        select * from me_question
+        <where>
+            <if test="map.subjectType !=null ">
+                subject_type=#{map.subjectType}
+            </if>
+
+            <if test="map.carType!=null ">
+                and car_type=#{map.carType}
+            </if>
+
+            <if test="map.questionType !=null ">
+                and question_type=#{map.questionType}
+            </if>
+            <if test="map.objectiveType !=null ">
+                and objective_type=#{map.objectiveType}
+            </if>
+
+            <!--> 随机100题判断，放到最后<!-->
+            <if test="map.isRandom!=null ">
+                ORDER BY RAND() LIMIT 100
+            </if>
+        </where>
+
+    </select>
+
+
+    <select id="selectExamQuestion" resultType="me.zhengjie.modules.mockexam.pojo.MeQuestion">
+        select * from me_question
+        <where>
+            <if test="map.subjectType !=null ">
+                subject_type=#{map.subjectType}
+            </if>
+
+            <if test="map.carType!=null ">
+                and car_type=#{map.carType}
+            </if>
+
+            <if test="map.questionType !=null ">
+                and question_type=#{map.questionType}
+            </if>
+            <if test="map.objectiveType !=null ">
+                and objective_type=#{map.objectiveType}
+            </if>
+            <!--> 随机100题判断，放到最后<!-->
+            <if test="map.isRandom!=null ">
+                ORDER BY RAND() LIMIT 100
+            </if>
+        </where>
+
+    </select>
+    <select id="selectIds" resultType="java.lang.Long">
+        select id from me_question
+        <include refid="queryByType"></include>
+
+    </select>
+
+    <select id="selectRandomByPage" resultType="me.zhengjie.modules.mockexam.pojo.MeQuestion">
+        select * from me_question
+        <where>
+            <if test="map.questionType !=null ">
+                and question_type=#{map.questionType}
+            </if>
+            <if test="map.objectiveType !=null ">
+                and objective_type=#{map.objectiveType}
+            </if>
+        </where>
+        ORDER BY RAND()
+    </select>
+    <select id="selectByObjectiveType" resultType="java.lang.Long">
+        select id from me_question
+        <include refid="queryByType"></include>
+
+    </select>
+    <select id="selectQuestionCount" resultType="java.lang.Integer">
+        select count(*) from me_question
+        <include refid="queryByType"></include>
+
+    </select>
+    <select id="selectNoProcessingPic" resultType="me.zhengjie.modules.mockexam.pojo.MeQuestion">
+        select * from me_question
+              where pic !="" and target_pic is null
+    </select>
+
+
+    <select id="selectObjectTypeBehavior"
+            resultType="me.zhengjie.modules.mockexam.pojo.MeUserBehavior$userBehaviorResult">
+        select objective_type as 'maximumObjectiveType', count(objective_type) as 'wrongCount' from me_question
+        where id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        GROUP BY objective_type
+        order by wrongCount desc
+    </select>
+    <select id="selectQuestionTypeBehavior"
+            resultType="me.zhengjie.modules.mockexam.pojo.MeUserBehavior$userBehaviorResult">
+        select question_type as 'maximumQuestionType', count(objective_type) as 'wrongCount' from me_question
+        where id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        GROUP BY objective_type
+        order by wrongCount desc
+        limit 1
+    </select>
+    <update id="updateTargetPic" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update me_question
+            <set>
+                <if test="item.targetPic != null">
+                    target_pic = #{item.targetPic},
+                </if>
+            </set>
+            where id = #{item.id,jdbcType=BIGINT}
+        </foreach>
+
+    </update>
+</mapper>
+

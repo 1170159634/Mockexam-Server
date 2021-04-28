@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.zhengjie.modules.mockexam.mapper.MeFavoritesMapper">
+
+
+    <select id="selectByPage" resultType="me.zhengjie.modules.mockexam.pojo.MeQuestion">
+        select DISTINCT q.* from me_favorites m left join
+        me_question q
+        on q.id=m.question_id
+        <where>
+            <if test="map.userId !=null ">
+                m.user_id=#{map.userId}
+            </if>
+            <if test="map.subjectType !=null ">
+               and  q.subject_type=#{map.subjectType}
+            </if>
+
+            <if test="map.carType!=null ">
+                and q.car_type=#{map.carType}
+            </if>
+
+            <if test="map.questionType !=null ">
+                and q.question_type=#{map.questionType}
+            </if>
+            <if test="map.objectiveType !=null ">
+                and q.objective_type=#{map.objectiveType}
+            </if>
+            <if test="map.likeQuestions !=null ">
+                and q.question like  concat('%',#{map.likeQuestions},'%')
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectQuestionCount" resultType="java.lang.Integer">
+        select count(DISTINCT(q.id)) from me_favorites m left join
+        me_question q
+        on q.id=m.question_id
+        <where>
+            <if test="map.userId !=null ">
+                m.user_id=#{map.userId}
+            </if>
+            <if test="map.subjectType !=null ">
+                and  q.subject_type=#{map.subjectType}
+            </if>
+
+            <if test="map.carType!=null ">
+                and q.car_type=#{map.carType}
+            </if>
+
+            <if test="map.questionType !=null ">
+                and q.question_type=#{map.questionType}
+            </if>
+            <if test="map.objectiveType !=null ">
+                and q.objective_type=#{map.objectiveType}
+            </if>
+            <if test="map.likeQuestions !=null ">
+                and q.question like  concat('%',#{map.likeQuestions},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>
+

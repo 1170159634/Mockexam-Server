@@ -1,0 +1,29 @@
+本地服务器需要安装 npm cnpm node 16以上
+				  git* maven3.* 
+				  java 1.8 
+				  jenkins *
+				  fastdfs
+				  nginx 1.8及以上
+				  redis 4.0及以上
+
+
+一、FreeStyle项目
+	(1)选择git地址
+	(2)添加用户凭据
+
+
+二、创建构建步骤
+	(1)选择shell
+	(2)后台的添加脚本
+	#! /bin/bash
+	sh /home/mockExam/background/start.sh
+
+	(2)前台的添加脚本
+	#! /bin/bash
+	sh /home/mockExam/front/start.sh
+
+
+三、服务器 /home文件夹下创建脚本文件夹
+
+
+四、按照控制台输出查看是否构建
